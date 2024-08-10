@@ -1,5 +1,6 @@
 // create user api app (mini application)
 const exp = require("express");
+const nodemailer = require("nodemailer");
 const userApp = exp.Router();
 const bcryptjs = require("bcryptjs");
 const expressAsyncHandler = require("express-async-handler");
@@ -7,10 +8,24 @@ const jwt = require("jsonwebtoken");
 const verifyToken = require("../Middlewares/verifyToken");
 require("dotenv").config();
 
+async function sendUserDataToDatabase(registeredData){
+  await usersCollection.insertOne(registeredData);
+}
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.PASSWORD,
+  },
+});
+
 let usersCollection;
+let temporaryCollection;
 // get userCollection App
 userApp.use((req, res, next) => {
   usersCollection = req.app.get("usersObj");
+  temporaryCollection=req.app.get("temporaryObj");
   next();
 });
 
@@ -20,10 +35,12 @@ userApp.post(
   expressAsyncHandler(async (req, res) => {
     // get user resource from client
     const newUser = req.body;
+    console.log("new user",newUser);
     // check for duplicate user based on username
     const dbuser = await usersCollection.findOne({
-      username: newUser.username,
+      emailId: newUser.emailId,
     });
+    console.log(dbuser)
     // if user found in db
     if (dbuser !== null) {
       res.send({ message: "User existed" });
@@ -32,13 +49,70 @@ userApp.post(
       const hashedpassword = await bcryptjs.hash(newUser.password, 8);
       //replace plain password with hashed password
       newUser.password = hashedpassword;
-      // create user
-      await userscollection.insertOne(newUser);
-      // send response
-      res.send({ message: "User is created" });
+      // generate otp with 4 digits
+      const otp = Math.floor(1000 + Math.random() * 9000);
+      console.log(otp);
+      
+      const tempData = {
+        emailId: newUser.emailId,
+        password: newUser.password,
+        username: newUser.username,
+        otp: otp
+      }
+
+      // store otp in temporary collection 
+      const tempUser=await temporaryCollection.findOne({emailId: newUser.emailId});
+      if(tempUser!==null){
+        await temporaryCollection.updateOne({emailId: newUser.emailId},{$set: tempData});
+      }
+      else
+      await temporaryCollection.insertOne(tempData);
+
+      // send email with otp
+      const mailOptions = {
+        from: process.env.EMAIL,
+        to: newUser.emailId,
+        subject: "OTP for registration",
+        text: `Your OTP is ${otp}`,
+      };
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
+
+      
     }
   })
 );
+
+// checking the otp
+userApp.post("/check-otp",expressAsyncHandler(async(req,res)=>{
+  const otp = req.body.otp;
+  const tempData = await temporaryCollection.findOne({otp: otp});
+  if(tempData===null){
+    res.send({message:"Invalid OTP"})
+  }
+  else{
+    await temporaryCollection.deleteOne({otp: otp});
+    const registeredData = {
+      username: tempData.username,
+      emailId: tempData.emailId,
+      password: tempData.password
+    }
+    sendUserDataToDatabase(registeredData);
+    res.send({ message: "User is created" });
+  }
+
+}))
+
+userApp.get("/get-tempuser/:emailId",expressAsyncHandler(async(req,res)=>{
+  const emailId = req.params.emailId;
+  const tempData = await temporaryCollection.findOne({emailId: emailId});
+  res.send({payload:tempData});
+}))
 
 // user login route
 userApp.post(
@@ -47,8 +121,8 @@ userApp.post(
     // get cred object from client
     const userCred = req.body;
     // check for username
-    const dbuser = await userscollection.findOne({
-      username: userCred.username,
+    const dbuser = await usersCollection.findOne({
+      emailId: userCred.emailId,
     });
     if (dbuser === null) {
       res.send({ message: "Invalid Username" });
@@ -74,38 +148,4 @@ userApp.post(
     }
   })
 );
-
-// get all articles (of all authors)
-userApp.get(
-  "/articles",
-  expressAsyncHandler(async (req, res) => {
-    // get articles collection from express app
-    const articlescollection = req.app.get("articlescollection");
-    // get all articles
-    let articlesList = await articlescollection
-      .find({ status: true })
-      .toArray();
-    res.send({ message: "All Articles", payload: articlesList });
-  })
-);
-
-// post comments for an article by article id
-
-userApp.post(
-  "/comment/:articleId",
-  expressAsyncHandler(async (req, res) => {
-    // get usercomment object
-    const usercomment = req.body;
-    const articleIdFromUrl = (+req.params.articleId);
-    // insert usercomment object to comments array of article by article id
-    let result = await articlescollection.updateOne(
-      { articleId: articleIdFromUrl },
-      { $addToSet: { comments: usercomment } }
-    );
-    console.log(result);
-    res.send({ message: "Comment Posted" });
-  })
-);
-
-// export userApp
 module.exports = userApp;

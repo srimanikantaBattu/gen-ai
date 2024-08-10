@@ -1,6 +1,32 @@
 import React from "react";
 import GoogleLogins from "./GoogleLogins";
+import {useForm} from 'react-hook-form'
+import axios from 'axios'
+
 function Register() {
+
+  let {
+    register,
+    handleSubmit,
+    formState:{errors}
+  } = useForm();
+
+  async function formSubmit(data){
+    try{
+      const result =await axios .post('http://localhost:4000/user-api/user',data);
+      console.log(result)
+      if(result.data.message==='User is created'){
+        alert('user created')
+      }
+      else{
+        alert('error in user cretion')
+      }
+    }
+    catch(err){
+      console.error(err);
+    }
+  }
+
   return (
     <div className="h-screen bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -8,10 +34,9 @@ function Register() {
           Create Account !
         </h1>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-zinc-900 py-8 px-4 sm:rounded-lg sm:px-10">
-          <form className="" method="POST" action="#">
+          <form className="" method="POST" action="#" onSubmit={handleSubmit(formSubmit)} >
             <div className="mt-6">
               <label
                 htmlFor="email"
@@ -25,27 +50,27 @@ function Register() {
                   name="email"
                   placeholder="user@example.com"
                   type="email"
-                  required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  {...register("emailId",{required:true})}
                 />
               </div>
             </div>
 
             <div className="mt-6">
               <label
-                htmlFor="email"
+                htmlFor="username"
                 className="block text-sm font-medium leading-5 text-white"
               >
-                Email address
+                User name
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <input
-                  id="email"
-                  name="email"
+                  id="username"
+                  name="username"
                   placeholder="user@example.com"
-                  type="email"
-                  required
+                  type="text"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  {...register("username",{required:true})}
                 />
               </div>
             </div>
@@ -62,8 +87,8 @@ function Register() {
                   id="password"
                   name="password"
                   type="password"
-                  required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  {...register("password",{required:true})}
                 />
               </div>
             </div>
@@ -80,8 +105,8 @@ function Register() {
                   id="password_confirmation"
                   name="password_confirmation"
                   type="password"
-                  required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  {...register("confirmpassword",{required:true})}
                 />
               </div>
             </div>
