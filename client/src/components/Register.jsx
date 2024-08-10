@@ -1,15 +1,15 @@
 import React from "react";
-
+import GoogleLogins from "./GoogleLogins";
 function Register() {
   return (
-    <div className="min-h-screen bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="h-screen bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h1 class="font-extrabold text-transparent text-3xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 text-center">
+        <h1 className="font-extrabold text-transparent text-3xl bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 text-center">
           Create Account !
         </h1>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-zinc-900 py-8 px-4 sm:rounded-lg sm:px-10">
           <form className="" method="POST" action="#">
             <div className="mt-6">
@@ -94,6 +94,7 @@ function Register() {
                 >
                   Create account
                 </button>
+                <GoogleLogins></GoogleLogins>
               </span>
             </div>
           </form>
