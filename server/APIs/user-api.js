@@ -7,12 +7,10 @@ const jwt = require("jsonwebtoken");
 const verifyToken = require("../Middlewares/verifyToken");
 require("dotenv").config();
 
-let userscollection;
-let articlescollection;
+let usersCollection;
 // get userCollection App
 userApp.use((req, res, next) => {
-  userscollection = req.app.get("userscollection");
-  articlescollection = req.app.get("articlescollection");
+  usersCollection = req.app.get("usersObj");
   next();
 });
 
@@ -23,7 +21,7 @@ userApp.post(
     // get user resource from client
     const newUser = req.body;
     // check for duplicate user based on username
-    const dbuser = await userscollection.findOne({
+    const dbuser = await usersCollection.findOne({
       username: newUser.username,
     });
     // if user found in db
