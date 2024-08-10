@@ -14,11 +14,13 @@ MongoClient.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     const moviesObj = dbObj.collection('moviescollection');
     const theatresObj = dbObj.collection('theatrescollection');
     const bookingsObj = dbObj.collection('bookingscollection');
+    const usersObj=dbObj.collection('usersCollection');
 
     app.set('moviesObj', moviesObj);
     app.set('theatresObj', theatresObj);
     app.set('bookingsObj', bookingsObj);
-    console.log('connected to database');
+    app.set('usersObj',usersObj);
+    console.log('Connected to database');
 }).catch(err => {
     console.log(err);
 });
@@ -29,6 +31,6 @@ app.use((err, req, res, next) => {
     res.send({ message: "error", payload: err.message });
 });
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log('listening on port 5000');
+app.listen(process.env.PORT || 4000, () => {
+    console.log(`Listening on port ${process.env.PORT}`);
 });
