@@ -11,9 +11,9 @@ const DB_URL = process.env.DB_URL;
 MongoClient.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(client => {
     const dbObj = client.db('cinematix');
-    const moviesObj = dbObj.collection('moviescollection');
-    const theatresObj = dbObj.collection('theatrescollection');
-    const bookingsObj = dbObj.collection('bookingscollection');
+    const moviesObj = dbObj.collection('moviesCollection');
+    const theatresObj = dbObj.collection('theatresCollection');
+    const bookingsObj = dbObj.collection('bookingsCollection');
     const usersObj=dbObj.collection('usersCollection');
 
     app.set('moviesObj', moviesObj);
