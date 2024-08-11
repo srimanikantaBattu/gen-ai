@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import RootLayout from './RootLayout'
 import Open from './components/Open'
 import Login from './components/Login'
+import Hello from './components/Hello'
 import Register from './components/Register'
 import Otp from './components/Otp'
 function App() {
@@ -27,6 +28,9 @@ function App() {
         {
           path: "/otp",
           element: <Otp />
+        },{
+          path:"/hello",
+          element: <Hello />
         }
       ]
     }

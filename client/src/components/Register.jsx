@@ -18,6 +18,7 @@ function Register() {
       console.log(result)
       if(result.data.message==='User is created'){
         alert('user created')
+        navigate('/otp',{state:{emailId:data.emailId}})
       }
       else if(result.data.message==='Password and confirm password should be same'){
         alert('password and confirm password should be same')
@@ -28,7 +29,6 @@ function Register() {
       else{
         alert('error in user cretion')
       }
-      navigate('/otp',{state:{emailId:data.emailId}})
     }
     catch(err){
       console.error(err);
@@ -113,7 +113,7 @@ function Register() {
                   name="password_confirmation"
                   type="password"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
-                  {...register("confirmpassword",{required:true})}
+                  {...register("confirmPassword",{required:true})}
                 />
               </div>
             </div>

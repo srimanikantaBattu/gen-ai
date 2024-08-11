@@ -47,6 +47,7 @@ userApp.post(
     } else {
       // hash the password
       // check password and confirmpassword are same
+      console.log(newUser.password," ",newUser.confirmPassword)
       if (newUser.password !== newUser.confirmPassword) {
         console.log("Password and confirm password should be same");
         res.send({ message: "Password and confirm password should be same" });
@@ -88,6 +89,8 @@ userApp.post(
           console.log("Email sent: " + info.response);
         }
       });
+
+      res.send({message:"User is created"});
 
       
     }

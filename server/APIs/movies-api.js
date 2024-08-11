@@ -22,4 +22,17 @@ router.post('/movies', async (req, res) => {
     }
 });
 
+// moviesApi.js
+router.get('/movies', async (req, res) => {
+    try {
+        const moviesObj = req.app.get('moviesObj');
+        const movies = await moviesObj.find().toArray();  // Fetch all movies from the collection
+
+        res.send(movies);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        res.status(500).send({ message: "Error fetching movies", error: error.message });
+    }
+});
+
 module.exports = router;

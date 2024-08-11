@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import {useLocation} from 'react-router-dom'
+import {useLocation,useNavigate} from 'react-router-dom'
 import axios from 'axios';
 
 function Otp() {
+    const navigate = useNavigate();
     const {state} = useLocation();
     const email = state.emailId;
     let [otp, setOtp] = useState(-1);
@@ -54,6 +55,7 @@ function Otp() {
             if (decodedCode === otp) {
                 await axios.post(`http://localhost:4000/user-api/check-otp`, { otp: decodedCode });
                 alert("OTP Verified");
+                navigate("/home");
             } else {
                 alert("Invalid OTP");
             }
