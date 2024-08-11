@@ -120,7 +120,29 @@ userApp.post("/check-otp",expressAsyncHandler(async(req,res)=>{
 userApp.get("/get-tempuser/:emailId",expressAsyncHandler(async(req,res)=>{
   const emailId = req.params.emailId;
   const tempData = await temporaryCollection.findOne({emailId: emailId});
+  console.log("tempdata",tempData);
   res.send({payload:tempData});
+}))
+
+userApp.put('/resend-otp/:emailId',expressAsyncHandler(async(req,res)=>{
+  const emailId = req.params.emailId;
+  const tempData = await temporaryCollection.findOne({emailId: emailId});
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: tempData.emailId,
+    subject: "OTP for registration",
+    text: `Your OTP is ${otp}`,
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+  await temporaryCollection.updateOne({emailId: tempData.emailId},{$set: {otp: otp}});
+  res.send({message:"OTP has been sent"});
 }))
 
 // user login route

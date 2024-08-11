@@ -10,14 +10,16 @@ function Otp() {
     let [otp, setOtp] = useState(-1);
     let [resendAllowed, setResendAllowed] = useState(true);
     let [timer, setTimer] = useState(0); // Timer initially set to 0
-    let [data,setData]=[{}]
+    let [data,setData]=useState({})
 
     const fetchOtp = async () => {
         try {
             let tempUser = await axios.get(`http://localhost:4000/user-api/get-tempuser/${email}`);
             if(tempUser && tempUser.data && tempUser.data.payload && tempUser.data.payload.otp){
             setOtp(tempUser.data.payload.otp);
-            setData(tempUser.data.payload)
+            setData(tempUser.data.payload);
+            console.log(data)
+            console.log("pass",data.password)
             }
         } catch (error) {
             console.error("Error fetching OTP:", error);
@@ -26,7 +28,7 @@ function Otp() {
 
     useEffect(() => {
         fetchOtp();
-    }, [email]);
+    }, []);
 
     useEffect(() => {
         let interval;
@@ -90,14 +92,11 @@ function Otp() {
         setResendAllowed(false);
         setTimer(90);
         try {
-            await axios.post(`http://localhost:4000/user-api/user`, data);
-        } catch (error) {
-            console.error("Error resending OTP:", error);
-        }
-        try {
+            const response = await axios.put(`http://localhost:4000/user-api/resend-otp/${email}`);
+            console.log(response);
             fetchOtp();
         } catch (error) {
-            console.error("Error in fetching")
+            console.error("Error resending OTP:", error);
         }
     };
 

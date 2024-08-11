@@ -35,4 +35,21 @@ router.get('/movies', async (req, res) => {
     }
 });
 
+router.get('/movies/:id', async (req, res) => {
+    try {
+        const movieId = req.params.id;
+        const moviesObj = req.app.get('moviesObj');
+        const movie = await moviesObj.findOne({ _id: ObjectId(movieId) });
+
+        if (!movie) {
+            return res.status(404).send({ message: "Movie not found" });
+        }
+
+        res.send(movie);
+    } catch (error) {
+        console.error('Error fetching movie:', error);
+        res.status(500).send({ message: "Error fetching movie", error: error.message });
+    }
+});
+
 module.exports = router;
