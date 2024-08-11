@@ -46,6 +46,12 @@ userApp.post(
       res.send({ message: "User existed" });
     } else {
       // hash the password
+      // check password and confirmpassword are same
+      if (newUser.password !== newUser.confirmPassword) {
+        console.log("Password and confirm password should be same");
+        res.send({ message: "Password and confirm password should be same" });
+        return;
+      }
       const hashedpassword = await bcryptjs.hash(newUser.password, 8);
       //replace plain password with hashed password
       newUser.password = hashedpassword;

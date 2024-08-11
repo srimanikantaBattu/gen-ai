@@ -1,9 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import {useLocation} from 'react-router-dom'
 import axios from 'axios';
 
 function Otp() {
-    const email = "";
+    const {state} = useLocation();
+    const email = state.emailId;
     let [otp, setOtp] = useState(-1);
     let [resendAllowed, setResendAllowed] = useState(true);
     let [timer, setTimer] = useState(0); // Timer initially set to 0

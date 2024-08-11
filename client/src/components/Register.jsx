@@ -2,9 +2,10 @@ import React from "react";
 import GoogleLogins from "./GoogleLogins";
 import {useForm} from 'react-hook-form'
 import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 
 function Register() {
-
+  const navigate = useNavigate();
   let {
     register,
     handleSubmit,
@@ -18,9 +19,16 @@ function Register() {
       if(result.data.message==='User is created'){
         alert('user created')
       }
+      else if(result.data.message==='Password and confirm password should be same'){
+        alert('password and confirm password should be same')
+      }
+      else if(result.data.message==='User existed'){
+        alert('user existed')
+      }
       else{
         alert('error in user cretion')
       }
+      navigate('/otp',{state:{emailId:data.emailId}})
     }
     catch(err){
       console.error(err);
@@ -39,16 +47,16 @@ function Register() {
           <form className="" method="POST" action="#" onSubmit={handleSubmit(formSubmit)} >
             <div className="mt-6">
               <label
-                htmlFor="email"
+                htmlFor="emailId"
                 className="block text-sm font-medium leading-5 text-white"
               >
                 Email address
               </label>
               <div className="mt-1 relative rounded-md shadow-sm">
                 <input
-                  id="email"
-                  name="email"
-                  placeholder="user@example.com"
+                  id="emailId"
+                  name="emailId"
+                  placeholder="user@gmail.com"
                   type="email"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   {...register("emailId",{required:true})}
@@ -67,7 +75,6 @@ function Register() {
                 <input
                   id="username"
                   name="username"
-                  placeholder="user@example.com"
                   type="text"
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                   {...register("username",{required:true})}
