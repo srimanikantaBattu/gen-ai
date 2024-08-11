@@ -130,11 +130,12 @@ userApp.post(
     // get cred object from client
     const userCred = req.body;
     // check for username
+    console.log(userCred);
     const dbuser = await usersCollection.findOne({
       emailId: userCred.emailId,
     });
     if (dbuser === null) {
-      res.send({ message: "Invalid Username" });
+      res.send({ message: "Invalid Email" });
     } else {
       // check for password
       const status = await bcryptjs.compare(userCred.password, dbuser.password);

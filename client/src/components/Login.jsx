@@ -1,11 +1,46 @@
 import React from 'react'
+import {useForm} from 'react-hook-form'
+import axios from 'axios'
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+
+  const {register, handleSubmit, formState: {errors}} = useForm()
+
+
+  const navigate = useNavigate();
+
+
+  async function formSubmit(data){
+    try{
+      const result =await axios .post('http://localhost:4000/user-api/login',data);
+      console.log(result.data.message)
+      if(result.data.message==='login success'){
+        alert('login successfull')
+        navigate('/hello')
+      }
+      else if(result.data.message==='Invalid Email'){
+        alert('Invalid Email')
+      }
+      else if(result.data.message==='Invalid Password'){
+        alert('password not matched')
+      }
+      else{
+        alert('error in login')
+      }
+    }
+    catch(err){
+      console.error(err);
+    }
+  }
+
+
+
   return (
     <div className="h-screen bg-black flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-zinc-900 py-8 px-4 sm:rounded-lg sm:px-10">
-          <form className="" method="POST" action="#">
+          <form className="" method="POST" action="#" onSubmit={handleSubmit(formSubmit)} >
             <div className="mt-6">
               <label
                 htmlFor="email"
@@ -19,8 +54,8 @@ function Login() {
                   name="email"
                   placeholder="user@example.com"
                   type="email"
-                  required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  {...register("emailId", {required: true})}
                 />
               </div>
             </div>
@@ -37,8 +72,8 @@ function Login() {
                   id="password"
                   name="password"
                   type="password"
-                  required
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                  {...register("password", {required: true})}
                 />
               </div>
             </div>

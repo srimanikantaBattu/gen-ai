@@ -55,7 +55,7 @@ function Otp() {
             if (decodedCode === otp) {
                 await axios.post(`http://localhost:4000/user-api/check-otp`, { otp: decodedCode });
                 alert("OTP Verified");
-                navigate("/home");
+                navigate("/login");
             } else {
                 alert("Invalid OTP");
             }
