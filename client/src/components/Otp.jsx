@@ -3,22 +3,40 @@ import { useForm, Controller } from 'react-hook-form';
 import axios from 'axios';
 
 function Otp() {
-    const email = "jsunnybabu@gmail.com";
+    const email = "";
     let [otp, setOtp] = useState(-1);
+    let [resendAllowed, setResendAllowed] = useState(true);
+    let [timer, setTimer] = useState(0); // Timer initially set to 0
+    let [data,setData]=[{}]
+
+    const fetchOtp = async () => {
+        try {
+            let tempUser = await axios.get(`http://localhost:4000/user-api/get-tempuser/${email}`);
+            if(tempUser && tempUser.data && tempUser.data.payload && tempUser.data.payload.otp){
+            setOtp(tempUser.data.payload.otp);
+            setData(tempUser.data.payload)
+            }
+        } catch (error) {
+            console.error("Error fetching OTP:", error);
+        }
+    };
 
     useEffect(() => {
-        // Use async function inside useEffect
-        const fetchOtp = async () => {
-            try {
-                let tempUser = await axios.get(`http://localhost:4000/user-api/get-tempuser/${email}`);
-                setOtp(tempUser.data.payload.otp);
-            } catch (error) {
-                console.error("Error fetching OTP:", error);
-            }
-        };
-
         fetchOtp();
     }, [email]);
+
+    useEffect(() => {
+        let interval;
+        if (timer > 0) {
+            interval = setInterval(() => {
+                setTimer((prevTimer) => prevTimer - 1);
+            }, 1000);
+        } else if (timer === 0 && !resendAllowed) {
+            setResendAllowed(true);
+        }
+
+        return () => clearInterval(interval);
+    }, [timer, resendAllowed]);
 
     const { control, handleSubmit, watch, setFocus } = useForm({
         defaultValues: {
@@ -64,12 +82,33 @@ function Otp() {
         }
     };
 
+    const handleResend = async () => {
+        setResendAllowed(false);
+        setTimer(90);
+        try {
+            await axios.post(`http://localhost:4000/user-api/user`, data);
+        } catch (error) {
+            console.error("Error resending OTP:", error);
+        }
+        try {
+            fetchOtp();
+        } catch (error) {
+            console.error("Error in fetching")
+        }
+    };
+
+    const formatTimer = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds}`;
+    };
+
     return (
         <div className="bg-black flex justify-center items-center min-h-screen">
             <div className="max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
                 <header className="mb-8">
-                    <h1 className="text-2xl font-bold mb-1">Mobile Phone Verification</h1>
-                    <p className="text-[15px] text-slate-500">Enter the 4-digit verification code that was sent to your phone number.</p>
+                    <h1 className="text-2xl font-bold mb-1">Email Verification</h1>
+                    <p className="text-[15px] text-slate-500">Enter the 4-digit verification code that was sent to {email}</p>
                 </header>
                 <form id="otp-form" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center justify-center gap-3">
@@ -115,7 +154,13 @@ function Otp() {
                     </div>
                 </form>
                 <div className="text-sm text-slate-500 mt-4">
-                    Didn't receive code? <a href="#0" className="font-medium text-indigo-500 hover:text-indigo-600">Resend</a>
+                    {!resendAllowed ? (
+                        <p>Resend OTP in {formatTimer(timer)}</p>
+                    ) : (
+                        <div className="text-sm text-slate-500 mt-4">
+                    Didn't receive code? <button onClick={handleResend} href="#0" className="font-medium text-indigo-500 hover:text-indigo-600">Resend</button>
+                </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -6,8 +6,9 @@ import Otp from './components/Otp'
 function App() {
   return (
     <div className="">
-      <Otp></Otp>
+      {/* <Register></Register> */}
       {/* <Login/> */}
+      <Otp></Otp>
     </div>
   )
 }
