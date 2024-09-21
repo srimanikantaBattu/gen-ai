@@ -2,11 +2,11 @@ import React from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import RootLayout from './RootLayout'
 import Open from './components/Open'
-import Booking from './components/customer/Booking'
 import Login from './components/Login'
-import Hello from './components/Hello'
 import Register from './components/Register'
 import Otp from './components/Otp'
+import Sample from './components/Sample'
+
 function App() {
 
   const router = createBrowserRouter([
@@ -29,12 +29,10 @@ function App() {
         {
           path: "/otp",
           element: <Otp />
-        },{
-          path:"/hello",
-          element: <Hello />
-        },{
-          path:"/booking",
-          element: <Booking />
+        },
+        {
+          path:'/sample',
+          element:<Sample/>
         }
       ]
     }
