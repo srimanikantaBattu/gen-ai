@@ -16,8 +16,9 @@ function Login() {
       const result =await axios .post('http://localhost:4000/user-api/login',data);
       console.log(result.data.message)
       if(result.data.message==='login success'){
+        localStorage.setItem('emailId',data.emailId);
         alert('login successfull')
-        navigate('/hello')
+        navigate('/chapters');
       }
       else if(result.data.message==='Invalid Email'){
         alert('Invalid Email')

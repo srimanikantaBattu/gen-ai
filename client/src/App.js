@@ -5,14 +5,18 @@ import Open from './components/Open'
 import Login from './components/Login'
 import Register from './components/Register'
 import Otp from './components/Otp'
-import Sample from './components/Sample'
+import Analytics from './components/Analytics'
+import Cards from './components/Cards'
+import Content from './components/Content'
+import Quiz from './components/Quiz'
+import Chapter from './components/Chapter'
 
 function App() {
 
   const router = createBrowserRouter([
     {
-      path: "/",
-      element: <RootLayout />,
+      path:'/',
+      element:<RootLayout/>,
       children: [
         {
           path: "/",
@@ -31,8 +35,23 @@ function App() {
           element: <Otp />
         },
         {
-          path:'/sample',
-          element:<Sample/>
+          path: "/chapters",
+          element: <Cards />,
+        },
+        // {
+        //   path:'/chapter/:chapterNumber',
+        //   element:<Content/>
+        // },
+        {
+          path:'/quiz',
+          element:<Quiz/>
+        },
+        {
+          path:'/analytics',
+          element:<Analytics/>
+        },{
+          path:'/chapters/:chapterNumber',
+          element:<Chapter />
         }
       ]
     }

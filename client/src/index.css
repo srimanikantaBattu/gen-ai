@@ -15,11 +15,11 @@
   font-family: "Rubik Doodle Shadow", system-ui;
   font-weight: 400;
   font-style: normal;
-  color: red;
+  /* color: red; */
   font-size: 4rem;
 }
 .back{
-  background:rgba(0, 0, 0, 0.66) url("http://1.bp.blogspot.com/-7RVFPdjAUP0/UBA7U3T0dfI/AAAAAAAAAVo/Dbs5InA-LTc/s1600/0.jpg");
+  background:rgba(0, 0, 0, 0.66) url("https://aiworldschool.com/wp-content/uploads/2020/11/1200x600-Article1-1-1.png");
   background-repeat: no-repeat;
   background-size: cover;
   background-blend-mode: darken;
